@@ -1,0 +1,63 @@
+# LeadFlow — Docker Compose for local development and production-like deployments.
+# Usage: docker compose up --build
+# Services:
+#   - db:      PostgreSQL 16 (persistent volume)
+#   - backend: FastAPI (uvicorn) on :8000
+#   - frontend: Next.js on :3000
+
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: leadflow-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-leadflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-leadflow}
+      POSTGRES_DB: ${POSTGRES_DB:-leadflow}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-leadflow} -d ${POSTGRES_DB:-leadflow}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: leadflow-backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-leadflow}:${POSTGRES_PASSWORD:-leadflow}@db:5432/${POSTGRES_DB:-leadflow}
+      APP_TIMEZONE: ${APP_TIMEZONE:-UTC}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000}
+      DISCUSSION_DEDUP_WINDOW_SECONDS: ${DISCUSSION_DEDUP_WINDOW_SECONDS:-90}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: leadflow-frontend
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:8000}
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  pgdata:
