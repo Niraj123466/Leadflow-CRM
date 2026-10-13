@@ -1,0 +1,108 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/*
+ * LeadFlow theme — a restrained dark-navy SaaS palette.
+ * The app is intentionally dark-only: all tokens are defined once here so
+ * components never hard-code colors.
+ */
+
+:root {
+  --radius: 0.625rem;
+
+  --background: #0a0f1c;
+  --foreground: #e6ebf5;
+
+  --card: #101a2e;
+  --card-foreground: #e6ebf5;
+
+  --popover: #0e1729;
+  --popover-foreground: #e6ebf5;
+
+  --primary: #4f7cff;
+  --primary-foreground: #ffffff;
+
+  --secondary: #1b2740;
+  --secondary-foreground: #cdd7ea;
+
+  --muted: #16203a;
+  --muted-foreground: #93a1bd;
+
+  --accent: #1e2a47;
+  --accent-foreground: #e6ebf5;
+
+  --destructive: #f05252;
+  --destructive-foreground: #ffffff;
+
+  --success: #34d399;
+  --warning: #fbbf24;
+
+  --border: #22304d;
+  --input: #22304d;
+  --ring: #4f7cff;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Visible, consistent keyboard focus for every interactive element. */
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-primary) 35%, transparent);
+  }
+
+  /* Slim, unobtrusive scrollbars that match the theme. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border) transparent;
+  }
+}
