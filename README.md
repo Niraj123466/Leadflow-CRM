@@ -339,5 +339,3 @@ docker compose up --build
 MIT — see `LICENSE` if added.
 
 ---
-
-Built with ☕ by a lazy senior developer who believes the best code is the code never written.
