@@ -22,8 +22,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY app ./app
-COPY alembic.ini alembic/env.py ./alembic/
-COPY alembic/versions ./alembic/versions
+# alembic.ini must live at the working dir (/app) — alembic looks for it there
+COPY alembic.ini ./
+COPY alembic/env.py alembic/versions ./alembic/
 
 # Non-root user
 RUN useradd --create-home --shell /bin/bash appuser && chown -R appuser:appuser /app
@@ -31,5 +32,5 @@ USER appuser
 
 EXPOSE 8000
 
-# Run migrations on startup, then start the server
-CMD alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000
+# Run migrations on startup, then start the server ($PORT is injected by Render)
+CMD alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
